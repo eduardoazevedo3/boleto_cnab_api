@@ -1,18 +1,16 @@
-FROM ruby:2.5-alpine
-MAINTAINER "raphael.valyi@akretion.com"
+FROM ruby:2.6
 
-WORKDIR /usr/src/app
+WORKDIR /boleto_api
 COPY . .
-RUN addgroup -S app && adduser -S -G app app
-RUN mkdir -p tmp log && chown app:app tmp log
+RUN mkdir -p tmp log
 
-RUN apk add build-base ghostscript git
+RUN apt-get update -y
+RUN apt-get upgrade -y
+RUN apt-get install -y build-essential ghostscript
+RUN rm -rf /var/lib/apt/lists/*
 
-# throw errors if Gemfile has been modified since Gemfile.lock
-RUN bundle config --global frozen 1
+RUN gem install bundler
 RUN bundle install
-RUN apk del build-base git
 
 EXPOSE 9292
-USER app
-CMD bundle exec puma config.ru
+CMD bundle exec puma config.ru -w 5
