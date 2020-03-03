@@ -13,5 +13,4 @@ RUN rm -rf /var/lib/apt/lists/*
 RUN gem install bundler
 RUN bundle install
 
-EXPOSE 9292
 CMD bundle exec puma config.ru -w 5
