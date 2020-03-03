@@ -1,8 +1,8 @@
 FROM alpine:latest
-LABEL org.opencontainers.image.authors="raphael.valyi@akretion.com"
 
-WORKDIR /usr/src/app
+WORKDIR /boleto_api
 COPY . .
+
 RUN addgroup -S app && adduser -S -G app app && \
     mkdir -p tmp log && chown app:app tmp log
 
@@ -20,8 +20,7 @@ RUN set -eux; \
 RUN set -eux; \
    gem install bundler:2.5.11 --no-document \
    && bundle install \
-   && rm -rf /usr/local/bundle/cache/*.gem \
-   ;
+   && rm -rf /usr/local/bundle/cache/*.gem
 
 # throw errors if Gemfile has been modified since Gemfile.lock
 RUN bundle config --global frozen 1 && bundle install
