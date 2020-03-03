@@ -3,6 +3,7 @@ FROM ruby:2.6
 WORKDIR /boleto_api
 COPY . .
 RUN mkdir -p tmp log
+RUN rm start.sh
 
 RUN apt-get update -y
 RUN apt-get upgrade -y
