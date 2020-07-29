@@ -1,8 +1,8 @@
 GIT
-  remote: https://github.com/kivanio/brcobranca.git
-  revision: 1ac2359fb1968b8f3aea40387bf5edd192491e64
+  remote: https://github.com/eduardoazevedo3/brcobranca.git
+  revision: f128dec78333fa8e4f83766f85c252aecd2913bf
   specs:
-    brcobranca (9.2.4)
+    brcobranca (9.2.5)
       parseline (~> 1.0.3)
       rghost (~> 0.9)
       rghost_barcode (~> 0.9)
@@ -46,7 +46,7 @@ GEM
     rack (2.0.6)
     rack-accept (0.4.5)
       rack (>= 0.4)
-    rghost (0.9.6)
+    rghost (0.9.7)
     rghost_barcode (0.9)
     thread_safe (0.3.6)
     tzinfo (1.2.5)
@@ -67,4 +67,4 @@ DEPENDENCIES
   puma
 
 BUNDLED WITH
-   1.16.2
+   1.17.3
