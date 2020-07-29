@@ -1,6 +1,7 @@
 require 'brcobranca'
 require 'grape'
 
+Brcobranca.configuration.gerador = :both
 
 module BoletoApi
 
@@ -82,7 +83,7 @@ module BoletoApi
           content_type "application/#{params[:type]}"
           header['Content-Disposition'] = "attachment; filename=boleto-#{params[:bank]}.#{params[:type]}"
           env['api.format'] = :binary
-          boleto.send("to_#{params[:type]}".to_sym)
+          boleto.to(params[:type])
         else
           error!(boleto.errors.messages, 400)
         end
@@ -95,12 +96,13 @@ module BoletoApi
       # curl -X POST -F type=pdf -F 'data=@/tmp/boletos_data.json' localhost:9292/api/boleto/multi > /tmp/boletos.pdf
       # boleto fields are listed here: https://github.com/kivanio/brcobranca/blob/master/lib/brcobranca/boleto/base.rb
       params do
+        requires :template, type: String, desc: 'Template: carne|boleto'
         requires :type, type: String, desc: 'Type: pdf|jpg|png|tif'
         requires :data, type: File, desc: 'json of the list of boletos, including the "bank" key'
       end
       post :multi do
         values = JSON.parse(params[:data][:tempfile].read())
-      	boletos = []
+        boletos = []
         errors = []
         values.each do |boleto_values|
           bank = boleto_values.delete('bank').camelize
@@ -115,7 +117,11 @@ module BoletoApi
           content_type "application/#{params[:type]}"
           header['Content-Disposition'] = "attachment; filename=boletos-#{params[:bank]}.#{params[:type]}"
           env['api.format'] = :binary
-          Brcobranca::Boleto::Base.lote(boletos, formato: params[:type].to_sym)
+          if params[:template] == 'carne'
+            Brcobranca::Boleto::Base.lote_carne(boletos, formato: params[:type].to_sym)
+          else
+            Brcobranca::Boleto::Base.lote(boletos, formato: params[:type].to_sym)
+          end
         else
           error!(errors, 400)
         end
@@ -138,7 +144,7 @@ module BoletoApi
       post do
         values = JSON.parse(params[:data][:tempfile].read())
         pagamentos = []
-      	errors = []
+        errors = []
         values['pagamentos'].each do |pagamento_values|
           pagamento = BoletoApi.get_pagamento(pagamento_values)
           if pagamento.valid?
