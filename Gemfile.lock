@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/eduardoazevedo3/brcobranca.git
-  revision: f128dec78333fa8e4f83766f85c252aecd2913bf
+  revision: 1dbd59a31f1565016bcaed9eccb88ff411fda221
   specs:
     brcobranca (9.2.5)
       parseline (~> 1.0.3)
