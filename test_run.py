@@ -38,6 +38,8 @@ def test_run():
             "convenio": 12387,
             "nosso_numero": "12345678",
             "bank": "itau",
+            # Bolepix: Optional EMV field for PIX QR Code payment
+            "emv": "00020101021226770014br.gov.bcb.pix2555api.example.com/pix/v2/cobv/9d36b84fc70b478fb95c12729b90ca255204000053039865802BR5913Kivanio Barbo6009SAO PAULO62070503***63041D3D",
         },
         {
             "valor": 10.00,

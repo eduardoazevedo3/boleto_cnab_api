@@ -9,7 +9,11 @@ A imagem usada no projeto é do OS [Alpine](https://hub.docker.com/_/alpine), o 
 
 # Funcionalidades
 
-Imprime **Boletos**, gera arquivos de **Remessa** e lê os arquivos de **Retorno** nos formatos CNAB 240, CNAB 400 para os 16 principais bancos do Brasil (Banco do Brasil, Banco do Nordeste, Banestes, Santander, Banrisul, Banco de Brasília, Caixa, Bradesco, Itaú, HSBC, Sicredi, Sicoob, AILOS, Unicred, CREDISIS e Citibank). Mas o grande barato desse projeto é que fazemos isso com menos de 200 linhas de código! Já comparou quantas linhas de de código você tem que manter sozinho ou quase se for re-fazer na linguagem que você quer tudo que o BRCobranca já faz? Seriam dezenas de milhares de linhas e você nunca teria uma qualidade tão boa...
+Imprime **Boletos**, gera arquivos de **Remessa** e lê os arquivos de **Retorno** nos formatos CNAB 240, CNAB 400 para os 16 principais bancos do Brasil (Banco do Brasil, Banco do Nordeste, Banestes, Santander, Banrisul, Banco de Brasília, Caixa, Bradesco, Itaú, HSBC, Sicredi, Sicoob, AILOS, Unicred, CREDISIS e Citibank).
+
+Além disso, agora suporta **Bolepix** - a integração de pagamentos PIX em boletos através de QR Codes EMV! Você pode gerar boletos com a opção de pagamento tradicional via código de barras E também via PIX usando um QR Code.
+
+Mas o grande barato desse projeto é que fazemos isso com menos de 200 linhas de código! Já comparou quantas linhas de de código você tem que manter sozinho ou quase se for re-fazer na linguagem que você quer tudo que o BRCobranca já faz? Seriam dezenas de milhares de linhas e você nunca teria uma qualidade tão boa...
 
 # API
 
@@ -29,11 +33,13 @@ GET /boleto/get
         requires :bank, type: String, desc: 'Bank'
         requires :type, type: String, desc: 'Type: pdf|jpg|png|tif'
         requires :data, type: String, desc: 'Boleto data as a stringified json'
+        # O campo 'emv' pode ser incluído no JSON para adicionar QR Code PIX (Bolepix)
 
 # Imprimir uma lista de Boletos:
 POST /boleto/multi
         requires :type, type: String, desc: 'Type: pdf|jpg|png|tif'
         requires :data, type: File, desc: 'json of the list of boletos, including the "bank" key'
+        # Cada boleto pode incluir o campo 'emv' para adicionar QR Code PIX (Bolepix)
 
 # Gerir um arquivo de Remessa CNAB 240 ou CNAB 400:
 POST /remessa
@@ -48,7 +54,10 @@ POST /retorno
         requires :data, type: File, desc: 'txt of the retorno file'
 ```
 
-Nota: os campos datas devem estar no formato YYYY/MM/DD
+**Notas importantes:**
+- Os campos de datas devem estar no formato YYYY/MM/DD
+- O campo `emv` é opcional e permite adicionar QR Code para pagamento via PIX (Bolepix)
+- Todos os campos de boleto suportados pelo BRCobranca podem ser utilizados: https://github.com/kivanio/brcobranca/blob/master/lib/brcobranca/boleto/base.rb
 
 O API está documentado com mais detalhes no código aqui: https://github.com/akretion/boleto_cnab_api/blob/master/lib/boleto_api.rb
 
@@ -72,6 +81,27 @@ echo '[{"valor":5.0,"cedente":"Kivanio Barbosa","documento_cedente":"12345678912
 curl -X POST -F type=pdf -F 'data=@/tmp/boletos_data.json' localhost:9292/api/boleto/multi > /tmp/boletos.pdf
 ```
 Você pode então conferir os Boletos gerados no arquivo ```/tmp/boletos.pdf```
+
+### Bolepix - Boleto com PIX (QR Code EMV)
+
+Para gerar um boleto com opção de pagamento via PIX, basta incluir o campo `emv` com o código EMV do PIX:
+
+```bash
+# Exemplo de boleto com PIX
+curl -X GET "http://localhost:9292/api/boleto?type=pdf&bank=itau&data=%7B%22valor%22%3A100.0%2C%22cedente%22%3A%22Kivanio%20Barbosa%22%2C%22documento_cedente%22%3A%2212345678912%22%2C%22sacado%22%3A%22Claudio%20Pozzebom%22%2C%22sacado_documento%22%3A%2212345678900%22%2C%22agencia%22%3A%220810%22%2C%22conta_corrente%22%3A%2253678%22%2C%22convenio%22%3A12387%2C%22numero_documento%22%3A%2212345678%22%2C%22emv%22%3A%22seu-codigo-emv-pix-aqui%22%7D" > /tmp/boleto_com_pix.pdf
+```
+
+Ou com múltiplos boletos incluindo PIX:
+
+```bash
+echo '[{"valor":5.0,"cedente":"Kivanio Barbosa","documento_cedente":"12345678912","sacado":"Claudio Pozzebom",
+"sacado_documento":"12345678900","agencia":"0810","conta_corrente":"53678","convenio":12387,"nosso_numero":"12345678",
+"emv":"00020101021226770014br.gov.bcb.pix2555api.example.com/pix/v2/cobv/9d36b84fc70b478fb95c12729b90ca255204000053039865802BR5913Kivanio Barbo6009SAO PAULO62070503***63041D3D",
+"bank":"itau"}]' > /tmp/boletos_pix_data.json
+curl -X POST -F template=boleto -F type=pdf -F 'data=@/tmp/boletos_pix_data.json' localhost:9292/api/boleto/multi > /tmp/boletos_com_pix.pdf
+```
+
+**Nota**: O campo `emv` é opcional. Se não for fornecido, o boleto será gerado apenas com código de barras tradicional. Quando fornecido, o boleto incluirá um QR Code para pagamento via PIX.
 
 ## Python
 
