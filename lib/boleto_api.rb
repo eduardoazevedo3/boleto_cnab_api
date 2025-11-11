@@ -1,7 +1,7 @@
 require 'brcobranca'
 require 'grape'
 
-Brcobranca.configuration.gerador = :both
+Brcobranca.configuration.gerador = :rghost_bolepix
 
 module BoletoApi
 
