@@ -1,18 +1,12 @@
 GIT
-  remote: https://github.com/kivanio/brcobranca.git
-  revision: 325e0eae69ad298477b935a441a22c61c7556f31
+  remote: https://github.com/eduardoazevedo3/brcobranca.git
+  revision: 26b61334a02ccd54625a3880c6f336172a045b95
   specs:
     brcobranca (12.0.0)
-      fast_blank (>= 1.0.1)
+      fast_blank
       parseline (>= 1.0.3)
-      rghost (>= 0.9.8)
+      rghost (= 0.9.8)
       rghost_barcode (>= 0.9)
-
-GIT
-  remote: https://github.com/shairontoledo/rghost.git
-  revision: 93240b15141abd9be961ab7b1c68c77fc445e4e7
-  specs:
-    rghost (0.9.9)
 
 GEM
   remote: https://rubygems.org/
@@ -76,6 +70,7 @@ GEM
     puma (6.6.0)
       nio4r (~> 2.0)
     rack (3.1.16)
+    rghost (0.9.8)
     rghost_barcode (0.9)
     ruby2_keywords (0.0.5)
     securerandom (0.4.1)
@@ -94,7 +89,7 @@ DEPENDENCIES
   grape
   mutex_m
   puma
-  rghost!
+  rghost (= 0.9.8)
 
 BUNDLED WITH
    2.5.11
