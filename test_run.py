@@ -49,7 +49,7 @@ def test_run():
             "agencia": "0810",
             "conta_corrente": "53678",
             "convenio": 12387,
-            "numero_documento": "12345678",
+            "nosso_numero": "12345678",
             "bank": "itau",
         },
         {
@@ -61,7 +61,7 @@ def test_run():
             "agencia": "1825",
             "conta_corrente": "0000528",
             "convenio": "245274",
-            "numero_documento": "000000000000001",
+            "nosso_numero": "000000000000001",
             "bank": "caixa",
         },
     ]
@@ -78,8 +78,8 @@ def test_run():
             },
             files={"data": data_file},
         )
-    assert result.status_code == 200, (
-        f"Expected 200, got {result.status_code}. Body: {result.text[:500]}"
+    assert result.ok, (
+        f"Expected 2xx, got {result.status_code}. Body: {result.text[:500]}"
     )
 
     cmd = ["docker", "rm", "-f", "boleto_cnab_api"]
