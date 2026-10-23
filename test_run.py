@@ -69,18 +69,20 @@ def test_run():
     with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as f:
         file_name = f.name
         f.write(content)
-    with open(file_name, "rb") as data_file:
-        result = requests.post(
-            "http://localhost:9292/api/boleto/multi",
-            data={
-                "type": "pdf",
-                "template": "boleto",
-            },
-            files={"data": data_file},
+    for template in ("boleto", "carne"):
+        with open(file_name, "rb") as data_file:
+            result = requests.post(
+                "http://localhost:9292/api/boleto/multi",
+                data={
+                    "type": "pdf",
+                    "template": template,
+                },
+                files={"data": data_file},
+            )
+        assert result.ok, (
+            f"{template}: expected 2xx, got {result.status_code}. Body: {result.text[:500]}"
         )
-    assert result.ok, (
-        f"Expected 2xx, got {result.status_code}. Body: {result.text[:500]}"
-    )
+        assert result.content.startswith(b"%PDF"), f"{template}: response is not a PDF"
 
     cmd = ["docker", "rm", "-f", "boleto_cnab_api"]
     result = subprocess.run(cmd, check=False, capture_output=True, text=True)
