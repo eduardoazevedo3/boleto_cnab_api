@@ -118,7 +118,7 @@ module BoletoApi
           header['Content-Disposition'] = "attachment; filename=boletos-#{params[:bank]}.#{params[:type]}"
           env['api.format'] = :binary
           if params[:template] == 'carne'
-            Brcobranca::Boleto::Base.lote_carne(boletos, formato: params[:type].to_sym)
+            Brcobranca::Boleto::Template::RghostCarne.lote_carne(boletos, formato: params[:type].to_sym)
           else
             Brcobranca::Boleto::Base.lote(boletos, formato: params[:type].to_sym)
           end
