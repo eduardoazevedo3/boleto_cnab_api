@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/eduardoazevedo3/brcobranca.git
-  revision: be6e7fa8a6dcbd81395692c9d32d95443796af8a
+  revision: dea7478ab8acb70406aaa3275fa27eceb9b421ca
   specs:
     brcobranca (12.0.0)
       fast_blank

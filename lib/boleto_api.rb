@@ -14,6 +14,11 @@ module BoletoApi
     clazz.new(values)
   end
 
+  def self.use_carne_logo(boleto)
+    carne_logo = boleto.logotipo.sub(/\.eps\z/, '_carne.eps')
+    boleto.define_singleton_method(:logotipo) { carne_logo } if File.exist?(carne_logo)
+  end
+
   def self.get_pagamento(values)
    date_fields = %w[data_vencimento data_emissao data_desconto data_segundo_desconto data_multa]
    date_fields.each do |date_field|
@@ -118,6 +123,7 @@ module BoletoApi
           header['Content-Disposition'] = "attachment; filename=boletos-#{params[:bank]}.#{params[:type]}"
           env['api.format'] = :binary
           if params[:template] == 'carne'
+            boletos.each { |boleto| BoletoApi.use_carne_logo(boleto) }
             Brcobranca::Boleto::Template::RghostCarne.lote_carne(boletos, formato: params[:type].to_sym)
           else
             Brcobranca::Boleto::Base.lote(boletos, formato: params[:type].to_sym)
